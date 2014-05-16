@@ -52,7 +52,7 @@ describe CollectionsHelper do
     end
 
     it "should generate a form that can remove the item" do
-      str = button_for_remove_from_collection item
+      str = button_for_remove_from_collection item, @collection
       doc = Nokogiri::HTML(str)
       form = doc.xpath('//form').first
       form.attr('action').should == "#{collections.collection_path(@collection.pid)}"
@@ -74,7 +74,7 @@ describe CollectionsHelper do
       end
 
       it "should generate a form that can remove the item" do
-        str = button_for_remove_from_collection item
+        str = button_for_remove_from_collection item, @collection
         doc = Nokogiri::HTML(str)
         form = doc.xpath('//form').first
         form.attr('action').should == "#{collections.collection_path(@collection.pid)}"
