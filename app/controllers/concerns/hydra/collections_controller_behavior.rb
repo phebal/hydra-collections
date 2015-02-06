@@ -28,7 +28,14 @@ module Hydra
       load_and_authorize_resource :except=>[:index], instance_name: :collection
 
       #This includes only the collection members in the search
-      self.solr_search_params_logic += [:include_collection_ids]
+      self.solr_search_params_logic += [:include_collection_ids, :only_collections]
+
+      layout 'collections'
+    end
+
+    def index
+      # run the solr query to find the collections
+      (@response, @document_list) = get_search_results
     end
 
     def new
@@ -173,8 +180,22 @@ module Hydra
 
     # include filters into the query to only include the collection memebers
     def include_collection_ids(solr_parameters, user_parameters)
+      return if action_name == 'index'
       solr_parameters[:fq] ||= []
       solr_parameters[:fq] << Solrizer.solr_name(:collection, :facetable)+':"'+@collection.id+'"'
     end
+
+    def only_collections(solr_parameters, user_parameters)
+      return unless action_name == 'index'
+      solr_parameters[:fq] ||= []
+      solr_parameters[:fq] << ActiveFedora::SolrQueryBuilder.construct_query_for_rel(has_model: ::Collection.to_class_uri)
+    end
+
+    # Override rails path for the views
+    def _prefixes
+      @_prefixes ||= super + ['catalog']
+    end
+
+
   end # module CollectionsControllerBehavior
 end # module Hydra

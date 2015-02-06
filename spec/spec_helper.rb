@@ -27,7 +27,6 @@ require 'active_fedora/cleaner'
 RSpec.configure do |config|
   config.use_transactional_fixtures = true
   config.include Devise::TestHelpers, :type => :controller
-  config.before(:each, type: "controller") { @routes = Hydra::Collections::Engine.routes }
   config.include EngineRoutes, :type => :controller
   config.infer_spec_type_from_file_location!
   # Stub out test stuff.
